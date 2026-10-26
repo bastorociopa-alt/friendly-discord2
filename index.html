@@ -267,7 +267,7 @@ const GIPHY_KEY_STORAGE='friendlyDiscordGiphyApiKey';
 const GIPHY_API_KEY='8XQtBBR3QsexwDuloUhcg8zLx4hBPj5P';
 let giphySdkClientPromise=null;
 let giphyOffset=0,giphyLastQuery='',giphyLastMode='',giphyLoadingMore=false;
-function getGiphyApiKey(){if(GIPHY_API_KEY&&GIPHY_API_KEY!=='PEGA_AQUI_TU_API_KEY')return GIPHY_API_KEY.trim();try{return (localStorage.getItem(GIPHY_KEY_STORAGE)||'').trim()}catch{return ''}}
+function getGiphyApiKey(){const embedded=String(GIPHY_API_KEY||'').trim();if(embedded&&embedded!=='PEGA_AQUI_TU_API_KEY'&&embedded!=='f')return embedded;try{const saved=(localStorage.getItem(GIPHY_KEY_STORAGE)||'').trim();return saved==='f'?'':saved}catch{return ''}}
 function configureGiphyApiKey(){const current=getGiphyApiKey();const entered=prompt('Pega tu clave API de GIPHY. Puedes crear una en https://developers.giphy.com/dashboard/\n\nLa clave se guarda solo en este navegador. Para que también funcione en el navegador de Liam, configura allí su clave o añade la tuya al HTML antes de publicarlo.',current);if(entered===null)return;const key=entered.trim();if(!key){try{localStorage.removeItem(GIPHY_KEY_STORAGE)}catch{}toast('Clave de GIPHY borrada en este navegador.');renderPicker();return}try{localStorage.setItem(GIPHY_KEY_STORAGE,key);toast('Clave de GIPHY guardada en este navegador.');renderPicker()}catch{toast('No se pudo guardar la clave en este navegador.',true)}}
 try{notificationSoundEnabled=localStorage.getItem('friendlyDiscordBellEnabled')==='true'}catch{}
 function updateNotificationButton(){const b=$('notificationToggle');if(!b)return;b.textContent=notificationSoundEnabled?'🔔':'🔕';b.title=notificationSoundEnabled?'Sonido activado. Pulsa para desactivar':'Activar sonido de campana y avisos';b.setAttribute('aria-label',b.title);b.style.color=notificationSoundEnabled?'#f5c451':''}
@@ -510,7 +510,7 @@ async function renderGiphy(grid,q,loadMore=false){
  if(!heading){heading=document.createElement('div');heading.className='giphy-section-title';heading.textContent=q?'Resultados de búsqueda':'Para ti';grid.append(heading)}
  let loading=grid.querySelector('.giphy-loading');
  if(!loading){loading=document.createElement('p');loading.className='small giphy-loading';grid.append(loading)}
- loading.textContent=!apiKey?'Añade tu clave API en la constante GIPHY_API_KEY, al principio del JavaScript del HTML (o usa ⚙).':loadMore?'Cargando más…':q?'Buscando…':'Cargando recomendaciones…';
+ loading.textContent=!apiKey?'Configura tu clave API de GIPHY con el botón ⚙. También puedes añadirla en la constante GIPHY_API_KEY del HTML.':loadMore?'Cargando más…':q?'Buscando…':'Cargando recomendaciones…';
  if(!apiKey){loading.hidden=false;return}
  if(loadMore){giphyLoadingMore=true;const more=grid.querySelector('.giphy-load-more');if(more)more.disabled=true}
  try{
